@@ -1,0 +1,7 @@
+- id: nb_clear_output
+  name: nb_clear_output
+  entry: nb_clear_output
+  language: python
+  minimum_pre_commit_version: 2.9.2
+  require_serial: true
+  types_or: [jupyter]
