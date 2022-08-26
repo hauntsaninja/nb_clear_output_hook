@@ -12,10 +12,16 @@ def main():
 
     filenames = [filename for filename in args.files if os.path.getsize(filename) > args.file_size_threshold]
     try:
-        subprocess.check_call([sys.executable, "-m", "jupyter", "nbconvert", "--clear-output", "--inplace", *filenames])
+        subprocess.check_call(
+            [sys.executable, "-m", "jupyter", "nbconvert", "--clear-output", "--inplace", *filenames],
+            env={"JUPYTER_NO_CONFIG": "please_use_default_config"},
+        )
     except Exception:
         for filename in filenames:
-            subprocess.check_call([sys.executable, "-m", "jupyter", "nbconvert", "--clear-output", "--inplace", filename])
+            subprocess.check_call(
+                [sys.executable, "-m", "jupyter", "nbconvert", "--clear-output", "--inplace", filename],
+                env={"JUPYTER_NO_CONFIG": "please_use_default_config"},
+            )
 
 
 if __name__ == "__main__":
