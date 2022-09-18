@@ -12,7 +12,7 @@ expected_output_file = "expected_test_output.ipynb"
 shutil.copyfile(input_file, output_file)
 
 # Run `nb_clear_output.py` on the output file
-subprocess.run(["python", "nb_clear_output.py", output_file])
+subprocess.check_call(["python", "nb_clear_output.py", output_file])
 
 # Check if the expected output file exists
 if not os.path.exists(expected_output_file):
