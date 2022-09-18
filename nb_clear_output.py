@@ -1,6 +1,28 @@
-import argparse
+mport argparse
 import nbformat
 import os
+
+
+def process_cell(cell, max_cell_output_size):
+    # See: https://github.com/jupyter/nbconvert/blob/68b496b7fcf4cfbffe9e1656ac52400a24cacc45/nbconvert/preprocessors/clearoutput.py#L11
+    
+    # Calculate the total size of outputs
+    output_size = 0
+    for output in cell.outputs:
+        output_size += len(output.get("text", ""))
+        if 'data' in output:
+            output_size += sum(data for _mime_type, data in output['data'].items())
+
+    if output_size <= max_cell_output_size:
+        # Output size is under the limit, we're OK.
+        return
+        
+    cell.outputs = []
+    cell.execution_count = None
+    # Remove metadata associated with output
+    if "metadata" in cell:
+        for field in {'collapsed', 'scrolled'}:
+            cell.metadata.pop(field, None)
 
 
 def process_file(filename, file_size_threshold, max_cell_output_size):
@@ -14,8 +36,7 @@ def process_file(filename, file_size_threshold, max_cell_output_size):
 
     # Clear output of cells that are too large
     for cell in nb.cells:
-        if sum(len(output.get("text", "")) for output in cell.outputs) > max_cell_output_size:
-            cell.outputs = []
+        process_cell(cell, max_cell_output_size)
 
     # Write the notebook
     with open(filename, "w") as f:
