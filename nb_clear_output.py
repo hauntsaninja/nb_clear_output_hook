@@ -1,4 +1,4 @@
-mport argparse
+import argparse
 import nbformat
 import os
 
@@ -10,6 +10,7 @@ def process_cell(cell, max_cell_output_size):
     output_size = 0
     for output in cell.outputs:
         output_size += len(output.get("text", ""))
+        # Check the size of the `data` field for all MIME types
         if 'data' in output:
             output_size += sum(data for _mime_type, data in output['data'].items())
 
