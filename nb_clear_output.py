@@ -12,7 +12,7 @@ def process_cell(cell, max_cell_output_size):
         output_size += len(output.get("text", ""))
         # Check the size of the `data` field for all MIME types
         if 'data' in output:
-            output_size += sum(data for _mime_type, data in output['data'].items())
+            output_size += sum(len(data) for _mime_type, data in output['data'].items())
 
     if output_size <= max_cell_output_size:
         # Output size is under the limit, we're OK.
