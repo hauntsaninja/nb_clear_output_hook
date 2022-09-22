@@ -1,7 +1,8 @@
 import argparse
 import json
-import nbformat
 import os
+
+import nbformat
 
 
 def process_cell(cell: nbformat.NotebookNode, max_cell_output_size: int) -> None:

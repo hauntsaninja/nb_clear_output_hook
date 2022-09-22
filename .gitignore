@@ -14,5 +14,3 @@ dist/
 
 .tox/
 .mypy_cache/
-
-test_output.ipynb
