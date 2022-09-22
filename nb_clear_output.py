@@ -1,29 +1,28 @@
 import argparse
+import json
 import nbformat
 import os
 
 
 def process_cell(cell, max_cell_output_size):
-    # See: https://github.com/jupyter/nbconvert/blob/68b496b7fcf4cfbffe9e1656ac52400a24cacc45/nbconvert/preprocessors/clearoutput.py#L11
-    
-    # Calculate the total size of outputs
-    output_size = 0
-    for output in cell.outputs:
-        output_size += len(output.get("text", ""))
-        # Check the size of the `data` field for all MIME types
-        if 'data' in output:
-            output_size += sum(len(data) for _mime_type, data in output['data'].items())
+    # Compare to:
+    # https://github.com/jupyter/nbconvert/blob/68b496b7fcf4cfbffe9e1656ac52400a24cacc45/nbconvert/preprocessors/clearoutput.py#L11
 
-    if output_size <= max_cell_output_size:
-        # Output size is under the limit, we're OK.
+    if cell.cell_type != "code":
         return
-        
-    cell.outputs = []
-    cell.execution_count = None
+
     # Remove metadata associated with output
     if "metadata" in cell:
-        for field in {'collapsed', 'scrolled'}:
+        for field in {"collapsed", "scrolled"}:
             cell.metadata.pop(field, None)
+
+    # Calculate the total size of outputs
+    output_size = len(json.dumps(cell.outputs))
+    if output_size <= max_cell_output_size:
+        return
+
+    cell.outputs = []
+    cell.execution_count = None
 
 
 def process_file(filename, file_size_threshold, max_cell_output_size):
