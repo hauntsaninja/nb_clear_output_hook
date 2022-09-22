@@ -47,7 +47,7 @@ def process_file(filename: str, file_size_threshold: int, max_cell_output_size: 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--file-size-threshold", type=int, default=10 * 1024)
-    parser.add_argument("--max-cell-output-size", type=int, default=1024)
+    parser.add_argument("--max-cell-output-size", type=int, default=512)
     parser.add_argument("files", nargs="+")
     args = parser.parse_args()
 

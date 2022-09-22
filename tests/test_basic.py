@@ -1,9 +1,10 @@
 import filecmp
-import os
 import shutil
 import subprocess
 import tempfile
 from pathlib import Path
+
+import nbformat
 
 root = Path(__file__).parent.parent
 
@@ -28,4 +29,19 @@ def test_basic():
         else:
             print("Test failed: diffs found between", test_file, "and", expected_output_file)
             subprocess.run(["diff", test_file, expected_output_file])
-            raise RuntimeError
+            raise AssertionError
+
+        # Check that cleared cells are cleared and non-cleared cells are not cleared
+        with open(test_file) as f:
+            nb = nbformat.read(f, as_version=4)
+
+        for cell in nb.cells:
+            if not cell.source:
+                continue
+            first_line = cell.source.splitlines()[0]
+            if first_line == "# this cell output should be kept":
+                assert cell.outputs
+            elif first_line == "# this cell output should be cleared":
+                assert not cell.outputs
+            else:
+                raise AssertionError(f"unexpected first line: {first_line!r}")
