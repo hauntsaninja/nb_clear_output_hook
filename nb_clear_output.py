@@ -4,7 +4,7 @@ import nbformat
 import os
 
 
-def process_cell(cell, max_cell_output_size):
+def process_cell(cell: nbformat.NotebookNode, max_cell_output_size: int) -> None:
     # Compare to:
     # https://github.com/jupyter/nbconvert/blob/68b496b7fcf4cfbffe9e1656ac52400a24cacc45/nbconvert/preprocessors/clearoutput.py#L11
 
@@ -25,7 +25,7 @@ def process_cell(cell, max_cell_output_size):
     cell.execution_count = None
 
 
-def process_file(filename, file_size_threshold, max_cell_output_size):
+def process_file(filename: str, file_size_threshold: int, max_cell_output_size: int) -> None:
     # Bail out early if the file is not large enough
     if os.path.getsize(filename) <= file_size_threshold:
         return
@@ -43,7 +43,7 @@ def process_file(filename, file_size_threshold, max_cell_output_size):
         nbformat.write(nb, f)
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--file-size-threshold", type=int, default=10 * 1024)
     parser.add_argument("--max-cell-output-size", type=int, default=1024)
